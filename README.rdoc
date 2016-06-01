@@ -1,4 +1,4 @@
-Angular Test Project
+Angular Test Project using https://thinkster.io/angular-rails#beginning-rails (requires some tweaking)
 
 Angular and Bootstrap for front end using UI router over NG router.
 SQLite3 and rails for backend support.

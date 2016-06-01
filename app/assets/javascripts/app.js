@@ -1,4 +1,4 @@
-var FlapperNews = angular.module('flapperNews', ["ui.router", "templates"])
+var FlapperNews = angular.module('flapperNews', ["ui.router", "templates", 'Devise'])
 
 FlapperNews.config(['$stateProvider','$urlRouterProvider',
   function($stateProvider, $urlRouterProvider) {
@@ -7,13 +7,47 @@ FlapperNews.config(['$stateProvider','$urlRouterProvider',
       .state('home', {
         url: '/home',
         templateUrl: 'home/_home.html',
-        controller: 'MainCtrl'
+        controller: 'MainCtrl',
+
+        resolve: {
+          postPromise: ['posts', function(posts){
+            return posts.getAll();
+          }]
+        }
       })
 
       .state('posts', {
         url: '/posts/{id}',
         templateUrl: 'posts/_posts.html',
-        controller: 'PostsCtrl'
+        controller: 'PostsCtrl',
+
+        resolve: {
+          post: ['$stateParams', 'posts', function($stateParams, posts) {
+            return posts.get($stateParams.id);
+          }]
+        }
+      })
+
+      .state('login', {
+        url: '/login',
+        templateUrl: 'auth/_login.html',
+        controller: 'AuthCtrl',
+        onEnter: ['$state', 'Auth', function($state, Auth) {
+          Auth.currentUser().then(function (){
+            $state.go('home');
+          })
+        }]
+      })
+
+      .state('register', {
+        url: '/register',
+        templateUrl: 'auth/_register.html',
+        controller: 'AuthCtrl',
+        onEnter: ['$state', 'Auth', function($state, Auth) {
+          Auth.currentUser().then(function (){
+            $state.go('home');
+          })
+        }]
       });
 
     $urlRouterProvider.otherwise('home');
